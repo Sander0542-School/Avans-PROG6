@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipsInSpace.Web", "ShipsIn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalacticSpaceTransitAuthority", "GalacticSpaceTransitAuthority\GalacticSpaceTransitAuthority.csproj", "{C9868B74-AED2-4D1F-9B7A-AB770B56249C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipsInSpace.Data", "ShipsInSpace.Data\ShipsInSpace.Data.csproj", "{BCC07F4F-A874-4E9C-BD85-A774CCE7DF85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{C9868B74-AED2-4D1F-9B7A-AB770B56249C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9868B74-AED2-4D1F-9B7A-AB770B56249C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9868B74-AED2-4D1F-9B7A-AB770B56249C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCC07F4F-A874-4E9C-BD85-A774CCE7DF85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCC07F4F-A874-4E9C-BD85-A774CCE7DF85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCC07F4F-A874-4E9C-BD85-A774CCE7DF85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCC07F4F-A874-4E9C-BD85-A774CCE7DF85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
