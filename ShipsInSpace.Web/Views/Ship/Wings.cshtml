@@ -1,0 +1,25 @@
+﻿@model WingsViewModel
+
+@{
+    ViewBag.Title = "Step 2";
+
+    const int wingCount = 2;
+}
+
+<h1>@ViewBag.Title</h1>
+
+<form asp-action="Wings">
+    @Html.ValidationSummary()
+    <input type="hidden" asp-for="Input.HullId">
+    <input type="hidden" asp-for="Input.EngineId">
+    
+    @for (var i = 0; i < wingCount; i++)
+    {
+        <div>
+            <select asp-for="Input.Wings[i].WingId" asp-items="@(new SelectList(Model.Wings, "Id", "Name"))"></select>
+            <select multiple asp-for="Input.Wings[i].Weapons" asp-items="@(new SelectList(Model.Weapons, "Id", "Name"))"></select>
+        </div>
+    }
+
+    <input type="submit" value="Go to step 3">
+</form>

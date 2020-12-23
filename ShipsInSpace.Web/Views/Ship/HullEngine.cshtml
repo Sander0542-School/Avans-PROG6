@@ -1,0 +1,23 @@
+﻿@model HullEngineViewModel
+
+@{
+    ViewBag.Title = "Step 1";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<form asp-action="HullEngine">
+    @Html.ValidationSummary()
+    <div class="form-group">
+        <label asp-for="Input.HullId" class="control-label"></label>
+        <select asp-for="Input.HullId" asp-items="@(new SelectList(Model.Hulls, "Id", "Name"))"></select>
+        <span asp-validation-for="Input.HullId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Input.EngineId" class="control-label"></label>
+        <select asp-for="Input.EngineId" asp-items="@(new SelectList(Model.Engines, "Id", "Name"))"></select>
+        <span asp-validation-for="Input.EngineId" class="text-danger"></span>
+    </div>
+
+    <input type="submit" value="Go to step 2">
+</form>
