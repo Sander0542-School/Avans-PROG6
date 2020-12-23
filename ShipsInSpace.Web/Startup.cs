@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GalacticSpaceTransitAuthority;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ShipsInSpace.Data;
+using ShipsInSpace.Logic;
 
 namespace ShipsInSpace.Web
 {
@@ -30,6 +32,9 @@ namespace ShipsInSpace.Web
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DatabaseConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddSingleton<ISpaceTransitAuthority, SpaceTransitAuthority>();
+            services.AddTransient<ShipBuilder>();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();

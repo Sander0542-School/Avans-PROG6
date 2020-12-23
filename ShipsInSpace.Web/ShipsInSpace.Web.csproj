@@ -15,8 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\GalacticSpaceTransitAuthority\GalacticSpaceTransitAuthority.csproj" />
-      <ProjectReference Include="..\ShipsInSpace.Data\ShipsInSpace.Data.csproj" />
+      <ProjectReference Include="..\ShipsInSpace.Logic\ShipsInSpace.Logic.csproj" />
     </ItemGroup>
 
     <ItemGroup>
