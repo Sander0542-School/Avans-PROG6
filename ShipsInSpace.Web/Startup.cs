@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ShipsInSpace.Data;
 using ShipsInSpace.Logic;
+using ShipsInSpace.Data.Models;
 
 namespace ShipsInSpace.Web
 {
@@ -35,9 +36,14 @@ namespace ShipsInSpace.Web
 
             services.AddSingleton<ISpaceTransitAuthority, SpaceTransitAuthority>();
             services.AddTransient<ShipBuilder>();
-
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            
+            services.AddDefaultIdentity<User>(options => {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddControllersWithViews();
         }

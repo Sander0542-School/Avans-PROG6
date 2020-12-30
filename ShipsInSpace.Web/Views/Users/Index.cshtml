@@ -1,0 +1,41 @@
+﻿@model IEnumerable<ShipsInSpace.Web.Models.Users.ViewModel>
+
+@{
+    ViewBag.Title = "Users";
+}
+
+<h1>Users</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                License Plate
+            </th>
+            <th>
+                Pilot License
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LicensePlate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PilotLicense)
+                </td>
+                <td>
+                    <a asp-action="Letter" asp-route-id="@item.Id">View letter</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
