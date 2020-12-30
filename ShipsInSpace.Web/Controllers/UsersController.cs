@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ShipsInSpace.Data.Models;
 using ShipsInSpace.Web.Models.Users;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,12 +46,12 @@ namespace ShipsInSpace.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                Random random = new Random();
-                string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                var random = new Random();
+                var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-                string secretKey = new string(Enumerable.Repeat(characters, 8).Select(s => s[random.Next(s.Length)]).ToArray());
+                var secretKey = new string(Enumerable.Repeat(characters, 8).Select(s => s[random.Next(s.Length)]).ToArray());
 
-                User user = new User
+                var user = new User
                 {
                     UserName = createViewModel.LicensePlate,
                     Email = $"{createViewModel.LicensePlate}@galaxy.space",
@@ -75,11 +74,11 @@ namespace ShipsInSpace.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            User user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
 
             if (user == null) return NotFound();
 
-            LetterViewModel letterViewModel = new LetterViewModel
+            var letterViewModel = new LetterViewModel
             {
                 Id = user.Id,
                 LicensePlate = user.UserName,
