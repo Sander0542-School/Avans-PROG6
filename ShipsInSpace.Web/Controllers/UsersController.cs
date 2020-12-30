@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ShipsInSpace.Web.Controllers
 {
 
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Manager")]
     public class UsersController : Controller
     {
         private readonly UserManager<User> _userManager;
