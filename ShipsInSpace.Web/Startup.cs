@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using ShipsInSpace.Data;
 using ShipsInSpace.Logic;
 using ShipsInSpace.Data.Models;
+using ShipsInSpace.Logic.Generators;
 
 namespace ShipsInSpace.Web
 {
@@ -36,6 +37,7 @@ namespace ShipsInSpace.Web
 
             services.AddSingleton<ISpaceTransitAuthority, SpaceTransitAuthority>();
             services.AddTransient<ShipBuilder>();
+            services.AddSingleton<SecretKeyGenerator>();
 
             services.AddIdentity<User, IdentityRole>(options =>
                 {
