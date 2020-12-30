@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ShipsInSpace.Data.Models;
+using ShipsInSpace.Logic.Generators;
 using ShipsInSpace.Web.Models.Users;
 using System;
 using System.Linq;
@@ -11,51 +12,45 @@ namespace ShipsInSpace.Web.Controllers
 {
 
     [Authorize(Roles = "Manager")]
-    public class UsersController : Controller
+    public class PiratesController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly SecretKeyGenerator _secretKeyGenerator;
 
-        public UsersController(UserManager<User> userManager)
+        public PiratesController(UserManager<User> userManager, SecretKeyGenerator secretKeyGenerator)
         {
             _userManager = userManager;
+            _secretKeyGenerator = secretKeyGenerator;
         }
 
         public async Task<IActionResult> Index()
         {
-            var users = _userManager.Users.ToList();
+            var pirates = await _userManager.GetUsersInRoleAsync("Pirate");
 
-            var usersInModel = users.Select(user => new ViewModel
+            var model = pirates.Select(user => new PirateModel
             {
                 Id = user.Id,
                 LicensePlate = user.UserName,
                 PilotLicense = user.PilotLicense
             });
 
-            return View(usersInModel);
+            return View(model);
         }
 
-        public async Task<IActionResult> Create()
-        {
-           // User user = await _userManager.GetUserAsync(User);
-
-            return View(new CreateViewModel());
-        }
+        public async Task<IActionResult> Create() => View(new CreateViewModel());
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateViewModel createViewModel)
+        public async Task<IActionResult> Create(CreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var random = new Random();
-                var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-                var secretKey = new string(Enumerable.Repeat(characters, 8).Select(s => s[random.Next(s.Length)]).ToArray());
+                var secretKey = _secretKeyGenerator.Generate();
 
                 var user = new User
                 {
-                    UserName = createViewModel.LicensePlate,
-                    Email = $"{createViewModel.LicensePlate}@galaxy.space",
-                    PilotLicense = createViewModel.PilotLicense,
+                    UserName = model.LicensePlate,
+                    Email = $"{model.LicensePlate}@galaxy.space",
+                    PilotLicense = model.PilotLicense,
                     SecretKey = secretKey
                 };
 
@@ -69,7 +64,7 @@ namespace ShipsInSpace.Web.Controllers
                 }
             }
 
-            return View(createViewModel);
+            return View(model);
         }
 
         public async Task<IActionResult> Letter(string id)
@@ -79,6 +74,7 @@ namespace ShipsInSpace.Web.Controllers
             var user = await _userManager.FindByIdAsync(id);
 
             if (user == null) return NotFound();
+            if (!await _userManager.IsInRoleAsync(user, "Pirate")) return NotFound();
 
             var letterViewModel = new LetterViewModel
             {

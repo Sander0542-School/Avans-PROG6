@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShipsInSpace.Web.Models.Users
 {
-    public class LetterViewModel : ViewModel
+    public class LetterViewModel : PirateModel
     {
         [Display(Name = "Secret Key")]
         public string SecretKey { get; set; }

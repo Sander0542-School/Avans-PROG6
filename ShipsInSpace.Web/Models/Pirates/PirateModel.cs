@@ -7,7 +7,7 @@ using static ShipsInSpace.Data.Models.User;
 
 namespace ShipsInSpace.Web.Models.Users
 {
-    public class ViewModel
+    public class PirateModel
     {
         public string Id { get; set; }
 
