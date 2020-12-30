@@ -36,14 +36,19 @@ namespace ShipsInSpace.Web
 
             services.AddSingleton<ISpaceTransitAuthority, SpaceTransitAuthority>();
             services.AddTransient<ShipBuilder>();
-            
-            services.AddDefaultIdentity<User>(options => {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // services.AddDefaultIdentity<User>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddIdentity<User, IdentityRole>(options =>
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddControllersWithViews();
         }
@@ -76,7 +81,6 @@ namespace ShipsInSpace.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
             });
         }
     }
