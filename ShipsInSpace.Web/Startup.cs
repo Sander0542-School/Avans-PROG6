@@ -37,8 +37,6 @@ namespace ShipsInSpace.Web
             services.AddSingleton<ISpaceTransitAuthority, SpaceTransitAuthority>();
             services.AddTransient<ShipBuilder>();
 
-            // services.AddDefaultIdentity<User>().AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddIdentity<User, IdentityRole>(options =>
                 {
                     options.Password.RequireDigit = false;
