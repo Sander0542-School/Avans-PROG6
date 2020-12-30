@@ -15,6 +15,6 @@ namespace ShipsInSpace.Web.Models.Users
         public string LicensePlate { get; set; }
 
         [Display(Name = "Pilot License")]
-        public PilotLicenses PilotLicense { get; set; }
+        public PilotLicenses? PilotLicense { get; set; }
     }
 }

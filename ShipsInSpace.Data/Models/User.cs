@@ -10,9 +10,10 @@ namespace ShipsInSpace.Data.Models
     public class User : IdentityUser
     {
         public string SecretKey { get; set; }
-        public PilotLicenses PilotLicense { get; set; }
+        public PilotLicenses? PilotLicense { get; set; }
 
-        public enum PilotLicenses { 
+        public enum PilotLicenses
+        {
             A,
             B,
             C,
