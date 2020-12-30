@@ -1,0 +1,20 @@
+﻿@model ShipsInSpace.Web.Models.Users.LetterViewModel
+
+@{
+    ViewData["Title"] = "Letter";
+}
+
+<h1>Letter</h1>
+
+<h4>@Model.LicensePlate</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        Secret key: @Model.SecretKey
+    </div>
+    <div class="col-md-12">
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </div>
+</div>

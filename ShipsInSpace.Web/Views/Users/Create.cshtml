@@ -1,0 +1,44 @@
+﻿@using ShipsInSpace.Data.Models
+@model ShipsInSpace.Web.Models.Users.CreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>User</h4>
+<hr />
+<form asp-action="Create">
+    <div class="row">
+        <div class="col-md-6">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="LicensePlate" class="control-label"></label>
+                <input asp-for="LicensePlate" class="form-control" />
+                <span asp-validation-for="LicensePlate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="PilotLicense" class="control-label"></label>
+                <select asp-for="PilotLicense" class="form-control">
+                    @foreach (User.PilotLicenses pilotLicense in Enum.GetValues(typeof(User.PilotLicenses)))
+                    {
+                        <option name="@pilotLicense">@pilotLicense</option>
+                    }
+                </select>
+                <span asp-validation-for="PilotLicense" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</form>
