@@ -63,6 +63,8 @@ namespace ShipsInSpace.Web.Controllers
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "Pirate");
+                    
                     return RedirectToAction(nameof(Index));
                 }
             }
