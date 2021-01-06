@@ -141,11 +141,14 @@ namespace ShipsInSpace.Web.Controllers
 
                     var shipId = _transitAuthority.RegisterShip(jsonShip);
 
-                    var result = await _userManager.SetLockoutEnabledAsync(user, true);
-
-                    if (result.Succeeded)
+                    if (!string.IsNullOrWhiteSpace(shipId))
                     {
-                        return RedirectToAction(nameof(Registered), new {shipId});
+                        var result = await _userManager.SetLockoutEnabledAsync(user, true);
+
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction(nameof(Registered), new {shipId});
+                        }
                     }
                 }
             }
@@ -153,11 +156,11 @@ namespace ShipsInSpace.Web.Controllers
             TempData["Input.HullEngineWings"] = JsonSerializer.Serialize(model.Input);
             return RedirectToAction(nameof(Wings));
         }
-        
+
         public async Task<IActionResult> Registered(string shipId)
         {
             await _signInManager.SignOutAsync();
-            
+
             return View(shipId);
         }
 
