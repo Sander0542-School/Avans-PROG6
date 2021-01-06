@@ -11,16 +11,16 @@ namespace ShipsInSpace.Logic.Validators
     {
         public static IEnumerable<string> Validate(Ship ship, PilotLicense license)
         {
-            foreach (var s in ValidateWeight(ship, license)) yield return s;
+            foreach (var s in ValidateHull(ship, license)) yield return s;
 
-            foreach (var s in ValidateEnergy(ship)) yield return s;
+            foreach (var s in ValidateEngine(ship)) yield return s;
 
             foreach (var s in ValidateWings(ship)) yield return s;
 
             foreach (var s in ValidateWeapons(ship)) yield return s;
         }
 
-        public static IEnumerable<string> ValidateWeight(Ship ship, PilotLicense license)
+        public static IEnumerable<string> ValidateHull(Ship ship, PilotLicense license)
         {
             var totalWeight = ship.GetWeight();
 
@@ -35,7 +35,7 @@ namespace ShipsInSpace.Logic.Validators
             }
         }
 
-        public static IEnumerable<string> ValidateEnergy(Ship ship)
+        public static IEnumerable<string> ValidateEngine(Ship ship)
         {
             var shipEnergy = ship.GetEnergyConsumption();
             var weapons = ship.GetWeapons();
