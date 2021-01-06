@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using GalacticSpaceTransitAuthority;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ShipsInSpace.Logic;
 using ShipsInSpace.Logic.Helpers;
@@ -15,15 +16,19 @@ namespace ShipsInSpace.Web.Controllers
     [Authorize(Roles = "Pirate")]
     public class ShipController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ISpaceTransitAuthority _transitAuthority;
         private readonly ShipBuilder _shipBuilder;
         private readonly UserHelper _userHelper;
 
-        public ShipController(ISpaceTransitAuthority transitAuthority, ShipBuilder shipBuilder, UserHelper userHelper)
+        public ShipController(UserManager<IdentityUser> userManager, ISpaceTransitAuthority transitAuthority, ShipBuilder shipBuilder, UserHelper userHelper, SignInManager<IdentityUser> signInManager)
         {
+            _userManager = userManager;
             _transitAuthority = transitAuthority;
             _shipBuilder = shipBuilder;
             _userHelper = userHelper;
+            _signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -69,8 +74,7 @@ namespace ShipsInSpace.Web.Controllers
             {
                 var license = await _userHelper.GetLicense(User.Claims);
 
-                var ship = _shipBuilder.SetName("Temp")
-                    .SetHull(model.Input.HullId)
+                var ship = _shipBuilder.SetHull(model.Input.HullId)
                     .SetEngine(model.Input.EngineId)
                     .AddWing(model.Input.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
                     .Build();
@@ -117,6 +121,46 @@ namespace ShipsInSpace.Web.Controllers
             return RedirectToAction(nameof(HullEngine));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Confirm(ConfirmViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var ship = _shipBuilder.SetName("Temp")
+                    .SetHull(model.Input.HullId)
+                    .SetEngine(model.Input.EngineId)
+                    .AddWing(model.Input.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
+                    .Build();
+
+                var user = await _userManager.GetUserAsync(User);
+
+                var errors = ShipValidator.Validate(ship, await _userHelper.GetLicense(user));
+                if (!errors.Any())
+                {
+                    var jsonShip = JsonSerializer.Serialize(ship);
+
+                    var shipId = _transitAuthority.RegisterShip(jsonShip);
+
+                    var result = await _userManager.SetLockoutEnabledAsync(user, true);
+
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction(nameof(Registered), new {shipId});
+                    }
+                }
+            }
+
+            TempData["Input.HullEngineWings"] = JsonSerializer.Serialize(model.Input);
+            return RedirectToAction(nameof(Wings));
+        }
+        
+        public async Task<IActionResult> Registered(string shipId)
+        {
+            await _signInManager.SignOutAsync();
+            
+            return View(shipId);
+        }
+
         #region ApiHelpers
 
         #region HullEngine
@@ -126,7 +170,8 @@ namespace ShipsInSpace.Web.Controllers
             return new()
             {
                 Hulls = _transitAuthority.GetHulls(),
-                Engines = _transitAuthority.GetEngines()
+                Engines = _transitAuthority.GetEngines(),
+                Input = new HullEngineViewModel.InputModel()
             };
         }
 
@@ -148,7 +193,8 @@ namespace ShipsInSpace.Web.Controllers
             return new()
             {
                 Wings = _transitAuthority.GetWings(),
-                Weapons = _transitAuthority.GetWeapons()
+                Weapons = _transitAuthority.GetWeapons(),
+                Input = new WingsViewModel.InputModel()
             };
         }
 
