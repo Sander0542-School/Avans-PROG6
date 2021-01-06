@@ -6,13 +6,16 @@ namespace ShipsInSpace.Logic.Extensions
 {
     public static class ShipExtensions
     {
+        private const double StatisWeaponReduction = 0.15; // 15%
+        private const double WeaponEnergyReduction = 0.2; // 20%
+
         public static double GetWeight(this Ship ship)
         {
             double weight = ship.Engine.Weight + ship.Wings.Sum(wing => wing.Weight + wing.Hardpoint.Sum(weapon => weapon.Weight));
 
             if (ship.Wings.SelectMany(wing => wing.Hardpoint).Count(weapon => weapon.DamageType == DamageTypeEnum.Statis) >= 2)
             {
-                weight *= 0.85; // Ik neem aan dat uitrustingstukken alle soorten zijn (Engine, Wings and Weapons)
+                weight *= 1 - StatisWeaponReduction; // Ik neem aan dat uitrustingstukken alle soorten zijn (Engine, Wings and Weapons)
             }
 
             return weight;
@@ -30,7 +33,7 @@ namespace ShipsInSpace.Logic.Extensions
 
                 if (typeWeapons.Count() >= 3)
                 {
-                    energy *= 0.8; // Ik neem aan dat de energy van alle Weapons omlaag gaat
+                    energy *= 1 - WeaponEnergyReduction; // Ik neem aan dat de energy van alle Weapons omlaag gaat
                 }
 
                 shipEnergy += energy;

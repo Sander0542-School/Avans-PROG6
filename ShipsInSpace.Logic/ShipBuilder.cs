@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using GalacticSpaceTransitAuthority;
 
 namespace ShipsInSpace.Logic
@@ -45,7 +47,7 @@ namespace ShipsInSpace.Logic
 
         public ShipBuilder SetHull(int hullId)
         {
-            return SetHull(_transitAuthority.GetHulls().First(hull => hull.Id == hullId));
+            return SetHull(_transitAuthority.GetHulls().First(hull => hull.Id == hullId).Clone());
         }
 
         public ShipBuilder SetHull(Hull hull)
@@ -61,7 +63,7 @@ namespace ShipsInSpace.Logic
 
         public ShipBuilder SetEngine(int engineId)
         {
-            return SetEngine(_transitAuthority.GetEngines().First(hull => hull.Id == engineId));
+            return SetEngine(_transitAuthority.GetEngines().First(hull => hull.Id == engineId).Clone());
         }
 
         public ShipBuilder SetEngine(Engine engine)
@@ -87,8 +89,9 @@ namespace ShipsInSpace.Logic
 
         public ShipBuilder AddWing(int wingId, int[] weaponIds)
         {
-            var wing = _transitAuthority.GetWings().First(wing1 => wing1.Id == wingId);
-            wing.Hardpoint = weaponIds.Select(weaponId => _transitAuthority.GetWeapons().First(weapon => weapon.Id == weaponId)).ToList();
+            var wing = _transitAuthority.GetWings().First(wing1 => wing1.Id == wingId).Clone();
+
+            wing.Hardpoint = weaponIds.Select(weaponId => _transitAuthority.GetWeapons().First(weapon => weapon.Id == weaponId).Clone()).ToList();
 
             return AddWing(wing);
         }
