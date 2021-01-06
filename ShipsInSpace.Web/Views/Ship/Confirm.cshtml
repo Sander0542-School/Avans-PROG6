@@ -1,8 +1,9 @@
 ﻿@using ShipsInSpace.Logic.Extensions
+@using Microsoft.EntityFrameworkCore
 @model ConfirmViewModel
 
 @{
-    ViewData["Title"] = "Confirm";
+    ViewData["Title"] = "Confirm configuration";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -10,8 +11,10 @@
 <div class="row">
     <div class="col-6">
         <div class="card">
+            <div class="card-header">
+                @Model.Ship.Name
+            </div>
             <div class="card-body">
-                <h5 class="card-title">@Model.Ship.Name</h5>
 
                 <table class="table table-borderless">
                     <tr>
@@ -34,5 +37,30 @@
                 </table>
             </div>
         </div>
+    </div>
+    <div class="col-6">
+        @foreach (var wing in Model.Ship.Wings)
+        {
+            <div class="card">
+                <div class="card-header">
+                    Wing: @wing.Name
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless table-sm">
+                        <tr>
+                            <th>Weapons</th>
+                            <th>Type</th>
+                        </tr>
+                        @foreach (var weapon in wing.Hardpoint)
+                        {
+                            <tr>
+                                <td>@weapon.Name</td>
+                                <td>@weapon.DamageType</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        }
     </div>
 </div>
