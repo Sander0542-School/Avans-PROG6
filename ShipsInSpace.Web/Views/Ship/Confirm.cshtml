@@ -63,4 +63,15 @@
             </div>
         }
     </div>
+    <div class="col-12">
+
+        <form asp-action="Confirm" method="post">
+            <input type="hidden" asp-for="Input.WingCount">
+            <input type="hidden" asp-for="Input.HullId">
+            <input type="hidden" asp-for="Input.EngineId">
+            <input type="hidden" asp-for="Input.Wings">
+            <input type="hidden" asp-for="Ship"/>
+            <input type="submit" class="btn btn-primary" value="Confirm"/>
+        </form>
+    </div>
 </div>

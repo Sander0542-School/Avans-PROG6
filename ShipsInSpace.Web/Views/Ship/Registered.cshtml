@@ -1,0 +1,24 @@
+﻿@using ShipsInSpace.Logic.Extensions
+@using Microsoft.EntityFrameworkCore
+@model string
+
+@{
+    ViewData["Title"] = "Registered";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row pb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Ship registered!
+            </div>
+            <div class="card-body">
+                Your ship has been registered at the Galactic Space Transit Authority.<br/>
+                Please use following transponder code: <strong>@Model</strong><br/><br/>
+                After leaving this page, you will <strong>not</strong> be able to sign in again!
+            </div>
+        </div>
+    </div>
+</div>

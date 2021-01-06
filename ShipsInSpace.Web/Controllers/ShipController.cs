@@ -22,7 +22,8 @@ namespace ShipsInSpace.Web.Controllers
         private readonly ShipBuilder _shipBuilder;
         private readonly UserHelper _userHelper;
 
-        public ShipController(UserManager<IdentityUser> userManager, ISpaceTransitAuthority transitAuthority, ShipBuilder shipBuilder, UserHelper userHelper, SignInManager<IdentityUser> signInManager)
+        public ShipController(UserManager<IdentityUser> userManager, ISpaceTransitAuthority transitAuthority,
+            ShipBuilder shipBuilder, UserHelper userHelper, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _transitAuthority = transitAuthority;
@@ -59,7 +60,8 @@ namespace ShipsInSpace.Web.Controllers
         {
             if (TempData.ContainsKey("Input.HullEngine"))
             {
-                var hullEngineInput = JsonSerializer.Deserialize<HullEngineViewModel.InputModel>(TempData["Input.HullEngine"] as string);
+                var hullEngineInput =
+                    JsonSerializer.Deserialize<HullEngineViewModel.InputModel>(TempData["Input.HullEngine"] as string);
 
                 return View(BuildWingsViewModel(hullEngineInput));
             }
@@ -101,12 +103,14 @@ namespace ShipsInSpace.Web.Controllers
         {
             if (TempData.ContainsKey("Input.HullEngineWings"))
             {
-                var hullEngineWingsInput = JsonSerializer.Deserialize<WingsViewModel.InputModel>(TempData["Input.HullEngineWings"] as string);
+                var hullEngineWingsInput =
+                    JsonSerializer.Deserialize<WingsViewModel.InputModel>(TempData["Input.HullEngineWings"] as string);
 
                 var ship = _shipBuilder.SetName(await _userHelper.GetUserName(User))
                     .SetHull(hullEngineWingsInput.HullId)
                     .SetEngine(hullEngineWingsInput.EngineId)
-                    .AddWing(hullEngineWingsInput.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
+                    .AddWing(hullEngineWingsInput.Wings.Select(wing =>
+                        new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
                     .Build();
 
                 var model = new ConfirmViewModel
@@ -143,12 +147,7 @@ namespace ShipsInSpace.Web.Controllers
 
                     if (!string.IsNullOrWhiteSpace(shipId))
                     {
-                        var result = await _userManager.SetLockoutEnabledAsync(user, true);
-
-                        if (result.Succeeded)
-                        {
-                            return RedirectToAction(nameof(Registered), new {shipId});
-                        }
+                        return RedirectToAction(nameof(Registered), new {shipId});
                     }
                 }
             }
@@ -159,9 +158,11 @@ namespace ShipsInSpace.Web.Controllers
 
         public async Task<IActionResult> Registered(string shipId)
         {
+            var user = await _userManager.GetUserAsync(User);
             await _signInManager.SignOutAsync();
+            await _userManager.DeleteAsync(user);
 
-            return View(shipId);
+            return View("Registered", shipId);
         }
 
         #region ApiHelpers
