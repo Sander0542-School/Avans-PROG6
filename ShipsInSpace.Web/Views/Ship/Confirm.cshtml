@@ -1,0 +1,38 @@
+﻿@using ShipsInSpace.Logic.Extensions
+@model ConfirmViewModel
+
+@{
+    ViewData["Title"] = "Confirm";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Ship.Name</h5>
+
+                <table class="table table-borderless">
+                    <tr>
+                        <th>Hull</th>
+                        <td>@Model.Ship.Hull.Name</td>
+                    </tr>
+                    <tr>
+                        <th>Engine</th>
+                        <td>@Model.Ship.Engine.Name</td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <th>Weight</th>
+                        <td>@Model.Ship.GetWeight()</td>
+                    </tr>
+                    <tr>
+                        <th>Energy Comsumption</th>
+                        <td>@Model.Ship.GetEnergyConsumption()</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -24,6 +24,11 @@ namespace ShipsInSpace.Web.Models.Ship
             [EngineExists]
             [Display(Name = "Engine")]
             public int EngineId { get; set; }
+
+            [Required]
+            [EvenCount]
+            [Display(Name = "Wing Count")]
+            public int WingCount { get; set; }
         }
     }
 }

@@ -6,21 +6,24 @@ using GalacticSpaceTransitAuthority;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShipsInSpace.Logic;
+using ShipsInSpace.Logic.Helpers;
 using ShipsInSpace.Logic.Validators;
 using ShipsInSpace.Web.Models.Ship;
 
 namespace ShipsInSpace.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Pirate")]
     public class ShipController : Controller
     {
-        private ISpaceTransitAuthority _transitAuthority;
-        private ShipBuilder _shipBuilder;
+        private readonly ISpaceTransitAuthority _transitAuthority;
+        private readonly ShipBuilder _shipBuilder;
+        private readonly UserHelper _userHelper;
 
-        public ShipController(ISpaceTransitAuthority transitAuthority, ShipBuilder shipBuilder)
+        public ShipController(ISpaceTransitAuthority transitAuthority, ShipBuilder shipBuilder, UserHelper userHelper)
         {
             _transitAuthority = transitAuthority;
             _shipBuilder = shipBuilder;
+            _userHelper = userHelper;
         }
 
         public IActionResult Index()
@@ -31,11 +34,7 @@ namespace ShipsInSpace.Web.Controllers
         [HttpGet]
         public IActionResult HullEngine()
         {
-            return View(new HullEngineViewModel
-            {
-                Hulls = _transitAuthority.GetHulls(),
-                Engines = _transitAuthority.GetEngines()
-            });
+            return View(BuildHullEngineViewModel());
         }
 
         [HttpPost]
@@ -47,10 +46,7 @@ namespace ShipsInSpace.Web.Controllers
                 return RedirectToAction(nameof(Wings));
             }
 
-            model.Hulls = _transitAuthority.GetHulls();
-            model.Engines = _transitAuthority.GetEngines();
-
-            return View(model);
+            return View(BuildHullEngineViewModel(model.Input));
         }
 
         [HttpGet]
@@ -60,34 +56,26 @@ namespace ShipsInSpace.Web.Controllers
             {
                 var hullEngineInput = JsonSerializer.Deserialize<HullEngineViewModel.InputModel>(TempData["Input.HullEngine"] as string);
 
-                return View(new WingsViewModel
-                {
-                    Wings = _transitAuthority.GetWings(),
-                    Weapons = _transitAuthority.GetWeapons(),
-
-                    Input = new WingsViewModel.InputModel
-                    {
-                        HullId = hullEngineInput.HullId,
-                        EngineId = hullEngineInput.EngineId,
-                    }
-                });
+                return View(BuildWingsViewModel(hullEngineInput));
             }
 
             return RedirectToAction(nameof(HullEngine));
         }
 
         [HttpPost]
-        public IActionResult Wings(WingsViewModel model)
+        public async Task<IActionResult> Wings(WingsViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var license = await _userHelper.GetLicense(User.Claims);
+
                 var ship = _shipBuilder.SetName("Temp")
                     .SetHull(model.Input.HullId)
                     .SetEngine(model.Input.EngineId)
                     .AddWing(model.Input.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
                     .Build();
 
-                var errors = ShipValidator.Validate(ship).ToList();
+                var errors = ShipValidator.Validate(ship, license).ToList();
 
                 if (!errors.Any())
                 {
@@ -101,10 +89,7 @@ namespace ShipsInSpace.Web.Controllers
                 }
             }
 
-            model.Wings = _transitAuthority.GetWings();
-            model.Weapons = _transitAuthority.GetWeapons();
-
-            return View(model);
+            return View(BuildWingsViewModel(model.Input));
         }
 
         [HttpGet]
@@ -114,16 +99,84 @@ namespace ShipsInSpace.Web.Controllers
             {
                 var hullEngineWingsInput = JsonSerializer.Deserialize<WingsViewModel.InputModel>(TempData["Input.HullEngineWings"] as string);
 
-                var ship = _shipBuilder.SetName("Temp")
+                var ship = _shipBuilder.SetName(await _userHelper.GetUserName(User))
                     .SetHull(hullEngineWingsInput.HullId)
                     .SetEngine(hullEngineWingsInput.EngineId)
                     .AddWing(hullEngineWingsInput.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
                     .Build();
 
-                return Json(ship);
+                var model = new ConfirmViewModel
+                {
+                    Ship = ship,
+                    Input = hullEngineWingsInput
+                };
+
+                return View(model);
             }
 
             return RedirectToAction(nameof(HullEngine));
         }
+
+        #region ApiHelpers
+
+        #region HullEngine
+
+        private HullEngineViewModel BuildHullEngineViewModel()
+        {
+            return new()
+            {
+                Hulls = _transitAuthority.GetHulls(),
+                Engines = _transitAuthority.GetEngines()
+            };
+        }
+
+        private HullEngineViewModel BuildHullEngineViewModel(HullEngineViewModel.InputModel inputModel)
+        {
+            var model = BuildHullEngineViewModel();
+
+            model.Input = inputModel;
+
+            return model;
+        }
+
+        #endregion
+
+        #region Wings
+
+        private WingsViewModel BuildWingsViewModel()
+        {
+            return new()
+            {
+                Wings = _transitAuthority.GetWings(),
+                Weapons = _transitAuthority.GetWeapons()
+            };
+        }
+
+        private WingsViewModel BuildWingsViewModel(HullEngineViewModel.InputModel inputModel)
+        {
+            var model = BuildWingsViewModel();
+
+            model.Input = new WingsViewModel.InputModel
+            {
+                HullId = inputModel.HullId,
+                EngineId = inputModel.EngineId,
+                WingCount = inputModel.WingCount,
+            };
+
+            return model;
+        }
+
+        private WingsViewModel BuildWingsViewModel(WingsViewModel.InputModel inputModel)
+        {
+            var model = BuildWingsViewModel();
+
+            model.Input = inputModel;
+
+            return model;
+        }
+
+        #endregion
+
+        #endregion
     }
 }

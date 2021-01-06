@@ -18,6 +18,11 @@
         <select asp-for="Input.EngineId" asp-items="@(new SelectList(Model.Engines, "Id", "Name"))"></select>
         <span asp-validation-for="Input.EngineId" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label asp-for="Input.EngineId" class="control-label"></label>
+        <input asp-for="Input.WingCount" class="form-control">
+        <span asp-validation-for="Input.EngineId" class="text-danger"></span>
+    </div>
 
     <input type="submit" value="Go to step 2">
 </form>

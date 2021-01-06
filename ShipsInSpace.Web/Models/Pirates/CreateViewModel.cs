@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using static ShipsInSpace.Data.Models.User;
+﻿using System.ComponentModel.DataAnnotations;
+using ShipsInSpace.Logic.Licenses;
 
-namespace ShipsInSpace.Web.Models.Users
+namespace ShipsInSpace.Web.Models.Pirates
 {
     public class CreateViewModel
     {
@@ -15,6 +11,6 @@ namespace ShipsInSpace.Web.Models.Users
 
         [Required]
         [Display(Name = "Pilot License")]
-        public PilotLicenses PilotLicense { get; set; }
+        public PilotLicense PilotLicense { get; set; }
     }
 }

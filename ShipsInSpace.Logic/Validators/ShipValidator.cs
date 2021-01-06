@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using GalacticSpaceTransitAuthority;
+using ShipsInSpace.Logic.Extensions;
+using ShipsInSpace.Logic.Licenses;
 
 namespace ShipsInSpace.Logic.Validators
 {
     public class ShipValidator
     {
-        public static IEnumerable<string> Validate(Ship ship)
+        public static IEnumerable<string> Validate(Ship ship, PilotLicense license)
         {
-            foreach (var s in ValidateWeight(ship)) yield return s;
+            foreach (var s in ValidateWeight(ship, license)) yield return s;
 
             foreach (var s in ValidateEnergy(ship)) yield return s;
 
@@ -19,9 +20,14 @@ namespace ShipsInSpace.Logic.Validators
             foreach (var s in ValidateWeapons(ship)) yield return s;
         }
 
-        public static IEnumerable<string> ValidateWeight(Ship ship)
+        public static IEnumerable<string> ValidateWeight(Ship ship, PilotLicense license)
         {
-            var totalWeight = GetShipWeight(ship);
+            var totalWeight = ship.GetWeight();
+
+            if (totalWeight > license.GetMaxWeight())
+            {
+                yield return "The total weight of the Engine, Wings and Weapons exceeds the maximum weight the pilot can handle.";
+            }
 
             if (totalWeight > (int) ship.Hull.DefaultMaximumTakeOffMass)
             {
@@ -31,8 +37,8 @@ namespace ShipsInSpace.Logic.Validators
 
         public static IEnumerable<string> ValidateEnergy(Ship ship)
         {
-            var shipEnergy = GetShipEnergy(ship);
-            var weapons = GetShipWeapons(ship);
+            var shipEnergy = ship.GetEnergyConsumption();
+            var weapons = ship.GetWeapons();
 
             if (shipEnergy > ship.Energy)
             {
@@ -60,7 +66,7 @@ namespace ShipsInSpace.Logic.Validators
 
         public static IEnumerable<string> ValidateWeapons(Ship ship)
         {
-            var weaponTypes = GetShipWeapons(ship).Select(weapon => weapon.DamageType).Distinct().ToList();
+            var weaponTypes = ship.GetWeapons().Select(weapon => weapon.DamageType).Distinct().ToList();
             var kineticWings = ship.Wings.Where(wing => wing.Hardpoint.Any(weapon => weapon.DamageType == DamageTypeEnum.Kinetic)).ToList();
 
             if (weaponTypes.Contains(DamageTypeEnum.Heat) && weaponTypes.Contains(DamageTypeEnum.Cold))
@@ -98,44 +104,6 @@ namespace ShipsInSpace.Logic.Validators
             {
                 yield return "The Nullifier Weapon cannot be the only Weapon on a Wing.";
             }
-        }
-
-        private static double GetShipWeight(Ship ship)
-        {
-            double weight = ship.Engine.Weight + ship.Wings.Sum(wing => wing.Weight + wing.Hardpoint.Sum(weapon => weapon.Weight));
-
-            if (ship.Wings.SelectMany(wing => wing.Hardpoint).Count(weapon => weapon.DamageType == DamageTypeEnum.Statis) >= 2)
-            {
-                weight *= 0.85; // Ik neem aan dat uitrustingstukken alle soorten zijn (Engine, Wings and Weapons)
-            }
-
-            return weight;
-        }
-
-        private static double GetShipEnergy(Ship ship)
-        {
-            var weaponsByType = GetShipWeapons(ship).GroupBy(weapon => weapon.DamageType);
-
-            double shipEnergy = 0;
-
-            foreach (var typeWeapons in weaponsByType)
-            {
-                double energy = typeWeapons.Sum(weapon => weapon.EnergyDrain);
-
-                if (typeWeapons.Count() >= 3)
-                {
-                    energy *= 0.8; // Ik neem aan dat de energy van alle Weapons omlaag gaat
-                }
-
-                shipEnergy += energy;
-            }
-
-            return shipEnergy;
-        }
-
-        private static IEnumerable<Weapon> GetShipWeapons(Ship ship)
-        {
-            return ship.Wings.SelectMany(wing => wing.Hardpoint);
         }
     }
 }

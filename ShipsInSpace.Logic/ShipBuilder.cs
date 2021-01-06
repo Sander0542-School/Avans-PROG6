@@ -6,9 +6,8 @@ namespace ShipsInSpace.Logic
 {
     public class ShipBuilder
     {
-        private ISpaceTransitAuthority _transitAuthority;
-
-        private Ship _ship;
+        private readonly ISpaceTransitAuthority _transitAuthority;
+        private readonly Ship _ship;
 
         public ShipBuilder(ISpaceTransitAuthority transitAuthority)
         {

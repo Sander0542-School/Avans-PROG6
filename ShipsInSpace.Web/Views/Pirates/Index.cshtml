@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ShipsInSpace.Web.Models.Users.PirateModel>
+﻿@model IEnumerable<ShipsInSpace.Web.Models.Pirates.PirateModel>
 
 @{
     ViewBag.Title = "Users";
@@ -12,30 +12,26 @@
 
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                License Plate
-            </th>
-            <th>
-                Pilot License
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LicensePlate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PilotLicense)
+        </th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LicensePlate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PilotLicense)
-                </td>
-                <td>
-                    <a asp-action="Letter" asp-route-id="@item.Id">View letter</a>
-                </td>
-            </tr>
-        }
+    @foreach (var pirateModel in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(model => pirateModel.LicensePlate)
+            </td>
+            <td>
+                @Html.DisplayFor(model => pirateModel.PilotLicense)
+            </td>
+        </tr>
+    }
     </tbody>
 </table>

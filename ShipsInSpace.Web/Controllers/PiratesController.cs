@@ -1,40 +1,51 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ShipsInSpace.Data.Models;
 using ShipsInSpace.Logic.Generators;
-using ShipsInSpace.Web.Models.Users;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using ShipsInSpace.Logic;
+using ShipsInSpace.Logic.Helpers;
+using ShipsInSpace.Web.Models.Pirates;
 
 namespace ShipsInSpace.Web.Controllers
 {
-
     [Authorize(Roles = "Manager")]
     public class PiratesController : Controller
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly SecretKeyGenerator _secretKeyGenerator;
+        private readonly UserHelper _userHelper;
 
-        public PiratesController(UserManager<User> userManager, SecretKeyGenerator secretKeyGenerator)
+        public PiratesController(UserManager<IdentityUser> userManager, SecretKeyGenerator secretKeyGenerator, UserHelper userHelper)
         {
             _userManager = userManager;
             _secretKeyGenerator = secretKeyGenerator;
+            _userHelper = userHelper;
         }
 
         public async Task<IActionResult> Index()
         {
             var pirates = await _userManager.GetUsersInRoleAsync("Pirate");
 
-            var model = pirates.Select(user => new PirateModel
-            {
-                Id = user.Id,
-                LicensePlate = user.UserName,
-                PilotLicense = user.PilotLicense
-            });
+            var pirateModels = new List<PirateModel>();
 
-            return View(model);
+            foreach (var pirate in pirates)
+            {
+                var license = await _userHelper.GetLicense(pirate);
+
+                pirateModels.Add(new PirateModel
+                {
+                    Id = pirate.Id,
+                    LicensePlate = pirate.UserName,
+                    PilotLicense = license
+                });
+            }
+
+            return View(pirateModels);
         }
 
         public async Task<IActionResult> Create() => View(new CreateViewModel());
@@ -46,42 +57,43 @@ namespace ShipsInSpace.Web.Controllers
             {
                 var secretKey = _secretKeyGenerator.Generate();
 
-                var user = new User
+                var user = new IdentityUser
                 {
-                    UserName = model.LicensePlate,
-                    Email = $"{model.LicensePlate}@galaxy.space",
-                    PilotLicense = model.PilotLicense,
-                    SecretKey = secretKey
+                    UserName = model.LicensePlate
                 };
 
                 var result = await _userManager.CreateAsync(user, secretKey);
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddClaimAsync(user, new Claim("License", model.PilotLicense.ToString()));
                     await _userManager.AddToRoleAsync(user, "Pirate");
-                    
-                    return RedirectToAction(nameof(Index));
+
+                    TempData["SecretKey"] = secretKey;
+                    return RedirectToAction(nameof(Letter), new {userId = user.Id});
                 }
             }
 
             return View(model);
         }
 
-        public async Task<IActionResult> Letter(string id)
+        public async Task<IActionResult> Letter(string userId)
         {
-            if (id == null) return NotFound();
+            if (userId == null) return NotFound();
 
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null) return NotFound();
             if (!await _userManager.IsInRoleAsync(user, "Pirate")) return NotFound();
+
+            var license = await _userHelper.GetLicense(user);
 
             var letterViewModel = new LetterViewModel
             {
                 Id = user.Id,
                 LicensePlate = user.UserName,
-                PilotLicense = user.PilotLicense,
-                SecretKey = user.SecretKey
+                PilotLicense = license,
+                SecretKey = TempData["SecretKey"].ToString()
             };
 
             return View(letterViewModel);

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace ShipsInSpace.Web.Models.Users
+namespace ShipsInSpace.Web.Models.Pirates
 {
     public class LetterViewModel : PirateModel
     {

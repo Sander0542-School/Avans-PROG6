@@ -10,17 +10,17 @@ namespace ShipsInSpace.Logic.Validators.Attributes
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value is not IEnumerable<object> list)
+            if (value is int intValue && intValue % 2 == 0)
             {
-                return new ValidationResult($"The {validationContext.DisplayName} is not a list.");
+                return ValidationResult.Success;
             }
 
-            if (list.Count() % 2 != 0)
+            if (value is IEnumerable<object> listValue && listValue.Count() % 2 == 0)
             {
-                return new ValidationResult($"The {validationContext.DisplayName} does not contain an even amount of {validationContext.DisplayName}.");
+                return ValidationResult.Success;
             }
 
-            return ValidationResult.Success;
+            return new ValidationResult($"{validationContext.DisplayName} does not have an even count.");
         }
     }
 }

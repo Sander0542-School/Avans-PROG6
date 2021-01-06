@@ -1,5 +1,5 @@
-﻿@using ShipsInSpace.Data.Models
-@model ShipsInSpace.Web.Models.Users.CreateViewModel
+﻿@using ShipsInSpace.Logic.Licenses
+@model ShipsInSpace.Web.Models.Pirates.CreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -23,7 +23,7 @@
             <div class="form-group">
                 <label asp-for="PilotLicense" class="control-label"></label>
                 <select asp-for="PilotLicense" class="form-control">
-                    @foreach (User.PilotLicenses pilotLicense in Enum.GetValues(typeof(User.PilotLicenses)))
+                    @foreach (PilotLicense pilotLicense in Enum.GetValues(typeof(PilotLicense)))
                     {
                         <option name="@pilotLicense">@pilotLicense</option>
                     }

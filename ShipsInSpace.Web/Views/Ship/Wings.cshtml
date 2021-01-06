@@ -2,8 +2,6 @@
 
 @{
     ViewBag.Title = "Step 2";
-
-    const int wingCount = 2;
 }
 
 <h1>@ViewBag.Title</h1>
@@ -13,7 +11,7 @@
     <input type="hidden" asp-for="Input.HullId">
     <input type="hidden" asp-for="Input.EngineId">
     
-    @for (var i = 0; i < wingCount; i++)
+    @for (var i = 0; i < Model.Input.WingCount; i++)
     {
         <div>
             <select asp-for="Input.Wings[i].WingId" asp-items="@(new SelectList(Model.Wings, "Id", "Name"))"></select>

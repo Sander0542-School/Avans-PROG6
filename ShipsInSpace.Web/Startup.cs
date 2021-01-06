@@ -14,8 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ShipsInSpace.Data;
 using ShipsInSpace.Logic;
-using ShipsInSpace.Data.Models;
 using ShipsInSpace.Logic.Generators;
+using ShipsInSpace.Logic.Helpers;
 
 namespace ShipsInSpace.Web
 {
@@ -37,9 +37,10 @@ namespace ShipsInSpace.Web
 
             services.AddSingleton<ISpaceTransitAuthority, SpaceTransitAuthority>();
             services.AddTransient<ShipBuilder>();
-            services.AddSingleton<SecretKeyGenerator>();
+            services.AddScoped<SecretKeyGenerator>();
+            services.AddScoped<UserHelper>();
 
-            services.AddIdentity<User, IdentityRole>(options =>
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
                 {
                     options.Password.RequireDigit = false;
                     options.Password.RequiredUniqueChars = 0;
