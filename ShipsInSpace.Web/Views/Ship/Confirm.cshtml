@@ -69,8 +69,11 @@
             <input type="hidden" asp-for="Input.WingCount">
             <input type="hidden" asp-for="Input.HullId">
             <input type="hidden" asp-for="Input.EngineId">
-            <input type="hidden" asp-for="Input.Wings">
-            <input type="hidden" asp-for="Ship"/>
+            @for (var i = 0; i < Model.Input.Wings.Length; i++)
+            {
+                <input type="hidden" asp-for="Input.Wings[i].WingId">
+                <select multiple asp-for="Input.Wings[i].Weapons" asp-items="@(new SelectList(Model.Input.Wings[i].Weapons))" style="display: none"></select>
+            }
             <input type="submit" class="btn btn-primary" value="Confirm"/>
         </form>
     </div>

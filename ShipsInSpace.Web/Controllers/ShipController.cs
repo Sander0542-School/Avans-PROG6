@@ -136,9 +136,7 @@ namespace ShipsInSpace.Web.Controllers
                     .AddWing(model.Input.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
                     .Build();
 
-                var user = await _userManager.GetUserAsync(User);
-
-                var errors = ShipValidator.Validate(ship, await _userHelper.GetLicense(user));
+                var errors = ShipValidator.Validate(ship, await _userHelper.GetLicense(User.Claims));
                 if (!errors.Any())
                 {
                     var jsonShip = JsonSerializer.Serialize(ship);
