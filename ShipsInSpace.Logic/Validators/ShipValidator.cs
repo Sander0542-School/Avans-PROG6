@@ -104,8 +104,6 @@ namespace ShipsInSpace.Logic.Validators
                 if (kineticDrainError) break;
             }
 
-            KineticWingsEnd:
-
             if (ship.Wings.Any(wing => wing.Hardpoint.Count == 1 && wing.Hardpoint.First().Name == "Nullifier"))
             {
                 yield return "The Nullifier Weapon cannot be the only Weapon on a Wing.";
