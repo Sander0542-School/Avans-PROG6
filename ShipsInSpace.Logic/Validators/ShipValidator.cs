@@ -79,6 +79,8 @@ namespace ShipsInSpace.Logic.Validators
                 yield return "The combination of a Statis Weapons and a Gravity Weapon is not allowed.";
             }
 
+            var kineticDrainError = false;
+
             foreach (var kineticWing in kineticWings)
             {
                 var kineticWingEnergy = kineticWing.Hardpoint.Where(weapon => weapon.DamageType == DamageTypeEnum.Kinetic).Sum(weapon => weapon.EnergyDrain);
@@ -93,9 +95,13 @@ namespace ShipsInSpace.Logic.Validators
                     {
                         yield return "The difference in energy drain between Wings with Kinetic Weapons needs to be smaller than 35";
 
-                        goto KineticWingsEnd;
+                        kineticDrainError = true;
                     }
+
+                    if (kineticDrainError) break;
                 }
+
+                if (kineticDrainError) break;
             }
 
             KineticWingsEnd:
