@@ -42,7 +42,7 @@ namespace ShipsInSpace.Logic.Validators
 
         public static bool ValidMaximumTakeOffMass(Ship ship)
         {
-            return ship.GetWeight() > (int) ship.Hull.DefaultMaximumTakeOffMass;
+            return ship.GetWeight() <= (int) ship.Hull.DefaultMaximumTakeOffMass;
         }
 
         #endregion
