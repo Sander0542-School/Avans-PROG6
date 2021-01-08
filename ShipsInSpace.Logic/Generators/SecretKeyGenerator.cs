@@ -10,12 +10,13 @@ namespace ShipsInSpace.Logic.Generators
     {
         private readonly Random _random;
         private const string Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private const int Length = 8;
 
         public SecretKeyGenerator()
         {
             _random = new Random();
         }
 
-        public string Generate() => new string(Enumerable.Repeat(Characters, 8).Select(s => s[_random.Next(s.Length)]).ToArray());
+        public string Generate() => new string(Enumerable.Repeat(Characters, Length).Select(s => s[_random.Next(s.Length)]).ToArray());
     }
 }
