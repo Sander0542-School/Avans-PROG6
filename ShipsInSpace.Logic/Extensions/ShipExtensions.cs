@@ -23,7 +23,7 @@ namespace ShipsInSpace.Logic.Extensions
 
         public static double GetEnergyConsumption(this Ship ship)
         {
-            var weaponsByType = GetWeapons(ship).GroupBy(weapon => weapon.DamageType);
+            var weaponsByType = ship.GetWeapons().GroupBy(weapon => weapon.DamageType);
 
             double shipEnergy = 0;
 

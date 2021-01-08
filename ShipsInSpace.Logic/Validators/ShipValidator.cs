@@ -20,66 +20,125 @@ namespace ShipsInSpace.Logic.Validators
             foreach (var s in ValidateWeapons(ship)) yield return s;
         }
 
+        #region Hull
+
         public static IEnumerable<string> ValidateHull(Ship ship, PilotLicense license)
         {
-            var totalWeight = ship.GetWeight();
-
-            if (totalWeight > license.GetMaxWeight())
+            if (!ValidLicense(ship, license))
             {
                 yield return "The total weight of the Engine, Wings and Weapons exceeds the maximum weight the pilot can handle.";
             }
 
-            if (totalWeight > (int) ship.Hull.DefaultMaximumTakeOffMass)
+            if (!ValidMaximumTakeOffMass(ship))
             {
                 yield return "The total weight of the Engine, Wings and Weapons exceeds the Hulls maximum take off mass.";
             }
         }
 
+        public static bool ValidLicense(Ship ship, PilotLicense license)
+        {
+            return ship.GetWeight() <= license.GetMaxWeight();
+        }
+
+        public static bool ValidMaximumTakeOffMass(Ship ship)
+        {
+            return ship.GetWeight() > (int) ship.Hull.DefaultMaximumTakeOffMass;
+        }
+
+        #endregion
+
+        #region Engine
+
         public static IEnumerable<string> ValidateEngine(Ship ship)
         {
-            var shipEnergy = ship.GetEnergyConsumption();
-            var weapons = ship.GetWeapons();
-
-            if (shipEnergy > ship.Energy)
+            if (!ValidEnergyConsumption(ship))
             {
                 yield return "The Engine cannot provide enough energy to power the Wings and Weapons.";
             }
 
-            if (ship.Engine.Name == "Intrepid Class" && weapons.Any(weapon => weapon.Name == "Imploder"))
+            if (!ValidIntrepidImploder(ship))
             {
                 yield return "The Intrepid Class Engine cannot be used while using an Imploder Weapon.";
             }
         }
 
+        public static bool ValidEnergyConsumption(Ship ship)
+        {
+            return ship.GetEnergyConsumption() <= ship.Energy;
+        }
+
+        public static bool ValidIntrepidImploder(Ship ship)
+        {
+            return !(ship.Engine.Name == "Intrepid Class" && ship.GetWeapons().Any(weapon => weapon.Name == "Imploder"));
+        }
+
+        #endregion
+
+        #region Wings
+
         public static IEnumerable<string> ValidateWings(Ship ship)
         {
-            if (ship.Wings.Count % 2 != 0)
+            if (!ValidWingCount(ship.Wings))
             {
                 yield return "The Ship must contain an even number of Wings.";
             }
 
-            foreach (var wing in ship.Wings.Where(wing => wing.Hardpoint.Count > wing.NumberOfHardpoints))
+            foreach (var wing in ship.Wings.Where(wing => !ValidWingHardpointCount(wing)))
             {
                 yield return $"The {wing.Name} Wing contains too many Weapons. Maximum: {wing.NumberOfHardpoints}.";
             }
         }
 
+        public static bool ValidWingCount(IEnumerable<Wing> wings)
+        {
+            return wings.Count() % 2 == 0;
+        }
+
+        public static bool ValidWingHardpointCount(Wing wing)
+        {
+            return wing.Hardpoint.Count <= wing.NumberOfHardpoints;
+        }
+
+        #endregion
+
+        #region Weapons
+
         public static IEnumerable<string> ValidateWeapons(Ship ship)
         {
-            var weaponTypes = ship.GetWeapons().Select(weapon => weapon.DamageType).Distinct().ToList();
-            var kineticWings = ship.Wings.Where(wing => wing.Hardpoint.Any(weapon => weapon.DamageType == DamageTypeEnum.Kinetic)).ToList();
-
-            if (weaponTypes.Contains(DamageTypeEnum.Heat) && weaponTypes.Contains(DamageTypeEnum.Cold))
+            if (!ValidHeatColdCombination(ship.GetWeapons()))
             {
                 yield return "The combination of a Heat Weapon and a Cold Weapon is not allowed.";
             }
 
-            if (weaponTypes.Contains(DamageTypeEnum.Statis) && weaponTypes.Contains(DamageTypeEnum.Gravity))
+            if (!ValidStatisGravityCombination(ship.GetWeapons()))
             {
                 yield return "The combination of a Statis Weapons and a Gravity Weapon is not allowed.";
             }
 
-            var kineticDrainError = false;
+            if (!ValidKineticWings(ship.Wings))
+            {
+                yield return "The difference in energy drain between Wings with Kinetic Weapons needs to be smaller than 35";
+            }
+
+            if (!ValidNullifierCount(ship.Wings))
+            {
+                yield return "The Nullifier Weapon cannot be the only Weapon on a Wing.";
+            }
+        }
+
+        public static bool ValidHeatColdCombination(IEnumerable<Weapon> weapons)
+        {
+            return ValidWeaponCombination(weapons, DamageTypeEnum.Heat, DamageTypeEnum.Cold);
+        }
+
+        public static bool ValidStatisGravityCombination(IEnumerable<Weapon> weapons)
+        {
+            return ValidWeaponCombination(weapons, DamageTypeEnum.Statis, DamageTypeEnum.Gravity);
+        }
+
+        public static bool ValidKineticWings(IEnumerable<Wing> wings)
+        {
+            var kineticWings = wings.Where(wing => wing.Hardpoint.Any(weapon => weapon.DamageType == DamageTypeEnum.Kinetic)).ToList();
 
             foreach (var kineticWing in kineticWings)
             {
@@ -93,21 +152,26 @@ namespace ShipsInSpace.Logic.Validators
 
                     if (difference >= 35)
                     {
-                        yield return "The difference in energy drain between Wings with Kinetic Weapons needs to be smaller than 35";
-
-                        kineticDrainError = true;
+                        return false;
                     }
-
-                    if (kineticDrainError) break;
                 }
-
-                if (kineticDrainError) break;
             }
 
-            if (ship.Wings.Any(wing => wing.Hardpoint.Count == 1 && wing.Hardpoint.First().Name == "Nullifier"))
-            {
-                yield return "The Nullifier Weapon cannot be the only Weapon on a Wing.";
-            }
+            return true;
         }
+
+        public static bool ValidNullifierCount(IEnumerable<Wing> wings)
+        {
+            return !wings.Any(wing => wing.Hardpoint.Count == 1 && wing.Hardpoint.First().Name == "Nullifier");
+        }
+
+        public static bool ValidWeaponCombination(IEnumerable<Weapon> weapons, params DamageTypeEnum[] damageTypes)
+        {
+            var weaponTypes = weapons.Select(weapon => weapon.DamageType).Distinct().ToList();
+
+            return damageTypes.Any(damageType => !weaponTypes.Contains(damageType));
+        }
+
+        #endregion
     }
 }
