@@ -27,6 +27,7 @@ namespace ShipsInSpace.Web.Models.Ship
             public int EngineId { get; set; }
 
             [Required]
+            [Range(2, int.MaxValue)]
             [EvenCount]
             [Display(Name = "Wing Count")]
             public int WingCount { get; set; }
