@@ -769,6 +769,7 @@ namespace ShipsInSpace.Test.Logic.Validators
             {
                 wing.Hardpoint.Add(new Weapon
                 {
+                    Id = i,
                     Name = "Mullifier"
                 });
             }
