@@ -6,7 +6,7 @@ namespace ShipsInSpace.Logic.Generators
     public class SecretKeyGenerator : IGenerator
     {
         private const string Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private const int Length = 8;
+        public const int Length = 8;
         private readonly Random _random;
 
         public SecretKeyGenerator()
