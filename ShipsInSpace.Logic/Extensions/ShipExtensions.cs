@@ -6,10 +6,10 @@ namespace ShipsInSpace.Logic.Extensions
 {
     public static class ShipExtensions
     {
-        private const double StatisWeaponReduction = 0.15; // 15%
-        private const double WeaponEnergyReduction = 0.2; // 20%
+        public const double StatisWeaponReduction = 0.15; // 15%
+        public const double WeaponEnergyReduction = 0.2; // 20%
 
-        public static double GetWeight(this Ship ship)
+        public static int GetWeight(this Ship ship)
         {
             double weight = ship.Engine.Weight + ship.Wings.Sum(wing => wing.Weight + wing.Hardpoint.Sum(weapon => weapon.Weight));
 
@@ -18,10 +18,10 @@ namespace ShipsInSpace.Logic.Extensions
                 weight *= 1 - StatisWeaponReduction; // Ik neem aan dat uitrustingstukken alle soorten zijn (Engine, Wings and Weapons)
             }
 
-            return weight;
+            return (int) weight;
         }
 
-        public static double GetEnergyConsumption(this Ship ship)
+        public static int GetEnergyConsumption(this Ship ship)
         {
             var weaponsByType = ship.GetWeapons().GroupBy(weapon => weapon.DamageType);
 
@@ -39,7 +39,7 @@ namespace ShipsInSpace.Logic.Extensions
                 shipEnergy += energy;
             }
 
-            return shipEnergy;
+            return (int) shipEnergy;
         }
 
         public static IEnumerable<Weapon> GetWeapons(this Ship ship)

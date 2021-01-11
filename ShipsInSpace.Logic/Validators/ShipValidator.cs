@@ -42,7 +42,7 @@ namespace ShipsInSpace.Logic.Validators
 
         public static bool ValidMaximumTakeOffMass(Ship ship)
         {
-            return ship.GetWeight() > (int) ship.Hull.DefaultMaximumTakeOffMass;
+            return ship.GetWeight() <= (int) ship.Hull.DefaultMaximumTakeOffMass;
         }
 
         #endregion
@@ -53,7 +53,7 @@ namespace ShipsInSpace.Logic.Validators
         {
             if (!ValidEnergyConsumption(ship))
             {
-                yield return "The Engine cannot provide enough energy to power the Wings and Weapons.";
+                yield return "The Engine and Wings cannot provide enough energy to power the Wings and Weapons.";
             }
 
             if (!ValidIntrepidImploder(ship))
@@ -91,7 +91,7 @@ namespace ShipsInSpace.Logic.Validators
 
         public static bool ValidWingCount(IEnumerable<Wing> wings)
         {
-            return wings.Count() % 2 == 0;
+            return wings.Count() >= 2 && wings.Count() % 2 == 0;
         }
 
         public static bool ValidWingHardpointCount(Wing wing)
@@ -120,9 +120,12 @@ namespace ShipsInSpace.Logic.Validators
                 yield return "The difference in energy drain between Wings with Kinetic Weapons needs to be smaller than 35";
             }
 
-            if (!ValidNullifierCount(ship.Wings))
+            foreach (var wing in ship.Wings)
             {
-                yield return "The Nullifier Weapon cannot be the only Weapon on a Wing.";
+                if (!ValidNullifierCount(wing))
+                {
+                    yield return $"The Nullifier Weapon cannot be the only Weapon on the {wing.Name} Wing.";
+                }
             }
         }
 
@@ -160,9 +163,9 @@ namespace ShipsInSpace.Logic.Validators
             return true;
         }
 
-        public static bool ValidNullifierCount(IEnumerable<Wing> wings)
+        public static bool ValidNullifierCount(Wing wing)
         {
-            return !wings.Any(wing => wing.Hardpoint.Count == 1 && wing.Hardpoint.First().Name == "Nullifier");
+            return !(wing.Hardpoint.Count == 1 && wing.Hardpoint.First().Name == "Nullifier");
         }
 
         public static bool ValidWeaponCombination(IEnumerable<Weapon> weapons, params DamageTypeEnum[] damageTypes)

@@ -11,8 +11,7 @@ namespace ShipsInSpace.Logic.Extensions
                 PilotLicense.A => 1000,
                 PilotLicense.B => 1500,
                 PilotLicense.C => 2000,
-                PilotLicense.Z => int.MaxValue,
-                _ => 0
+                PilotLicense.Z => int.MaxValue
             };
         }
     }
