@@ -16,11 +16,11 @@ namespace ShipsInSpace.Web.Controllers
     [Authorize(Roles = "Pirate")]
     public class ShipController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ShipBuilder _shipBuilder;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ISpaceTransitAuthority _transitAuthority;
-        private readonly ShipBuilder _shipBuilder;
         private readonly UserHelper _userHelper;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public ShipController(UserManager<IdentityUser> userManager, ISpaceTransitAuthority transitAuthority,
             ShipBuilder shipBuilder, UserHelper userHelper, SignInManager<IdentityUser> signInManager)
@@ -89,10 +89,7 @@ namespace ShipsInSpace.Web.Controllers
                     return RedirectToAction(nameof(Confirm));
                 }
 
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError("Ship", error);
-                }
+                foreach (var error in errors) ModelState.AddModelError("Ship", error);
             }
 
             return View(BuildWingsViewModel(model.Input));
@@ -143,10 +140,7 @@ namespace ShipsInSpace.Web.Controllers
 
                     var shipId = _transitAuthority.RegisterShip(jsonShip);
 
-                    if (!string.IsNullOrWhiteSpace(shipId))
-                    {
-                        return RedirectToAction(nameof(Registered), new {shipId});
-                    }
+                    if (!string.IsNullOrWhiteSpace(shipId)) return RedirectToAction(nameof(Registered), new {shipId});
                 }
             }
 
@@ -208,7 +202,7 @@ namespace ShipsInSpace.Web.Controllers
             {
                 HullId = inputModel.HullId,
                 EngineId = inputModel.EngineId,
-                WingCount = inputModel.WingCount,
+                WingCount = inputModel.WingCount
             };
 
             return model;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +10,9 @@ namespace ShipsInSpace.Web.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<AccountController> _logger;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AccountController> logger)
         {
@@ -23,7 +22,7 @@ namespace ShipsInSpace.Web.Controllers
         }
 
         /// <summary>
-        /// Entry point into the login workflow
+        ///     Entry point into the login workflow
         /// </summary>
         public async Task<IActionResult> Login(string returnUrl = null)
         {
@@ -36,7 +35,7 @@ namespace ShipsInSpace.Web.Controllers
         }
 
         /// <summary>
-        /// Handle postback from username/password login
+        ///     Handle postback from username/password login
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -66,10 +65,10 @@ namespace ShipsInSpace.Web.Controllers
         public async Task<IActionResult> Logout(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            
+
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            
+
             return LocalRedirect(returnUrl);
         }
 

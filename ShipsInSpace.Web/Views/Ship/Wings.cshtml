@@ -17,7 +17,7 @@
         <div class="row pb-3">
             <div class="col-md-6">
                 <label asp-for="Input.Wings[i].WingId" class="control-label"></label>
-                <select asp-for="Input.Wings[i].WingId" class="form-control"  asp-items="@(new SelectList(Model.Wings, "Id", "Name"))"></select>
+                <select asp-for="Input.Wings[i].WingId" class="form-control" asp-items="@(new SelectList(Model.Wings, "Id", "Name"))"></select>
                 <span asp-validation-for="Input.Wings[i].WingId" class="text-danger"></span>
             </div>
             <div class="col-md-6">
@@ -28,5 +28,5 @@
         </div>
     }
 
-    <input type="submit" value="Go to step 3" class="btn btn-primary" >
+    <input type="submit" value="Go to step 3" class="btn btn-primary">
 </form>

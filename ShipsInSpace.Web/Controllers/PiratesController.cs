@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ShipsInSpace.Logic.Generators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using ShipsInSpace.Logic;
 using ShipsInSpace.Logic.Helpers;
 using ShipsInSpace.Web.Models.Pirates;
 
@@ -16,9 +13,9 @@ namespace ShipsInSpace.Web.Controllers
     [Authorize(Roles = "Manager")]
     public class PiratesController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly SecretKeyGenerator _secretKeyGenerator;
         private readonly UserHelper _userHelper;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public PiratesController(UserManager<IdentityUser> userManager, SecretKeyGenerator secretKeyGenerator, UserHelper userHelper)
         {
@@ -48,7 +45,10 @@ namespace ShipsInSpace.Web.Controllers
             return View(pirateModels);
         }
 
-        public async Task<IActionResult> Create() => View(new CreateViewModel());
+        public async Task<IActionResult> Create()
+        {
+            return View(new CreateViewModel());
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateViewModel model)
