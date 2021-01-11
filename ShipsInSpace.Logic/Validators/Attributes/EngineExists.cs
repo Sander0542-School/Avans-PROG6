@@ -13,16 +13,10 @@ namespace ShipsInSpace.Logic.Validators.Attributes
         {
             var transitAuthority = validationContext.GetService<ISpaceTransitAuthority>();
 
-            if (!int.TryParse(value.ToString(), out var engineId))
-            {
-                return new ValidationResult($"Engine {value} is not a valid engine id.");
-            }
+            if (!int.TryParse(value.ToString(), out var engineId)) return new ValidationResult($"Engine {value} is not a valid engine id.");
 
-            if (!transitAuthority.GetEngines().Any(engine => engine.Id == engineId))
-            {
-                return new ValidationResult($"Engine {value} does not exist in the SpaceTransitAuthority");
-            }
-            
+            if (!transitAuthority.GetEngines().Any(engine => engine.Id == engineId)) return new ValidationResult($"Engine {value} does not exist in the SpaceTransitAuthority");
+
             return ValidationResult.Success;
         }
     }

@@ -24,15 +24,9 @@ namespace ShipsInSpace.Logic.Validators
 
         public static IEnumerable<string> ValidateHull(Ship ship, PilotLicense license)
         {
-            if (!ValidLicense(ship, license))
-            {
-                yield return "The total weight of the Engine, Wings and Weapons exceeds the maximum weight the pilot can handle.";
-            }
+            if (!ValidLicense(ship, license)) yield return "The total weight of the Engine, Wings and Weapons exceeds the maximum weight the pilot can handle.";
 
-            if (!ValidMaximumTakeOffMass(ship))
-            {
-                yield return "The total weight of the Engine, Wings and Weapons exceeds the Hulls maximum take off mass.";
-            }
+            if (!ValidMaximumTakeOffMass(ship)) yield return "The total weight of the Engine, Wings and Weapons exceeds the Hulls maximum take off mass.";
         }
 
         public static bool ValidLicense(Ship ship, PilotLicense license)
@@ -51,15 +45,9 @@ namespace ShipsInSpace.Logic.Validators
 
         public static IEnumerable<string> ValidateEngine(Ship ship)
         {
-            if (!ValidEnergyConsumption(ship))
-            {
-                yield return "The Engine and Wings cannot provide enough energy to power the Wings and Weapons.";
-            }
+            if (!ValidEnergyConsumption(ship)) yield return "The Engine and Wings cannot provide enough energy to power the Wings and Weapons.";
 
-            if (!ValidIntrepidImploder(ship))
-            {
-                yield return "The Intrepid Class Engine cannot be used while using an Imploder Weapon.";
-            }
+            if (!ValidIntrepidImploder(ship)) yield return "The Intrepid Class Engine cannot be used while using an Imploder Weapon.";
         }
 
         public static bool ValidEnergyConsumption(Ship ship)
@@ -78,15 +66,9 @@ namespace ShipsInSpace.Logic.Validators
 
         public static IEnumerable<string> ValidateWings(Ship ship)
         {
-            if (!ValidWingCount(ship.Wings))
-            {
-                yield return "The Ship must contain an even number of Wings.";
-            }
+            if (!ValidWingCount(ship.Wings)) yield return "The Ship must contain an even number of Wings.";
 
-            foreach (var wing in ship.Wings.Where(wing => !ValidWingHardpointCount(wing)))
-            {
-                yield return $"The {wing.Name} Wing contains too many Weapons. Maximum: {wing.NumberOfHardpoints}.";
-            }
+            foreach (var wing in ship.Wings.Where(wing => !ValidWingHardpointCount(wing))) yield return $"The {wing.Name} Wing contains too many Weapons. Maximum: {wing.NumberOfHardpoints}.";
         }
 
         public static bool ValidWingCount(IEnumerable<Wing> wings)
@@ -105,28 +87,15 @@ namespace ShipsInSpace.Logic.Validators
 
         public static IEnumerable<string> ValidateWeapons(Ship ship)
         {
-            if (!ValidHeatColdCombination(ship.GetWeapons()))
-            {
-                yield return "The combination of a Heat Weapon and a Cold Weapon is not allowed.";
-            }
+            if (!ValidHeatColdCombination(ship.GetWeapons())) yield return "The combination of a Heat Weapon and a Cold Weapon is not allowed.";
 
-            if (!ValidStatisGravityCombination(ship.GetWeapons()))
-            {
-                yield return "The combination of a Statis Weapons and a Gravity Weapon is not allowed.";
-            }
+            if (!ValidStatisGravityCombination(ship.GetWeapons())) yield return "The combination of a Statis Weapons and a Gravity Weapon is not allowed.";
 
-            if (!ValidKineticWings(ship.Wings))
-            {
-                yield return "The difference in energy drain between Wings with Kinetic Weapons needs to be smaller than 35";
-            }
+            if (!ValidKineticWings(ship.Wings)) yield return "The difference in energy drain between Wings with Kinetic Weapons needs to be smaller than 35";
 
             foreach (var wing in ship.Wings)
-            {
                 if (!ValidNullifierCount(wing))
-                {
                     yield return $"The Nullifier Weapon cannot be the only Weapon on the {wing.Name} Wing.";
-                }
-            }
         }
 
         public static bool ValidHeatColdCombination(IEnumerable<Weapon> weapons)
@@ -153,10 +122,7 @@ namespace ShipsInSpace.Logic.Validators
 
                     var difference = Math.Abs(kineticWingEnergy - kineticWing1Energy);
 
-                    if (difference >= 35)
-                    {
-                        return false;
-                    }
+                    if (difference >= 35) return false;
                 }
             }
 

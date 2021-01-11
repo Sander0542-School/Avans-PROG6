@@ -13,10 +13,7 @@ namespace ShipsInSpace.Logic.Extensions
         {
             double weight = ship.Engine.Weight + ship.Wings.Sum(wing => wing.Weight + wing.Hardpoint.Sum(weapon => weapon.Weight));
 
-            if (ship.Wings.SelectMany(wing => wing.Hardpoint).Count(weapon => weapon.DamageType == DamageTypeEnum.Statis) >= 2)
-            {
-                weight *= 1 - StatisWeaponReduction; // Ik neem aan dat uitrustingstukken alle soorten zijn (Engine, Wings and Weapons)
-            }
+            if (ship.Wings.SelectMany(wing => wing.Hardpoint).Count(weapon => weapon.DamageType == DamageTypeEnum.Statis) >= 2) weight *= 1 - StatisWeaponReduction; // Ik neem aan dat uitrustingstukken alle soorten zijn (Engine, Wings and Weapons)
 
             return (int) weight;
         }
@@ -31,10 +28,7 @@ namespace ShipsInSpace.Logic.Extensions
             {
                 double energy = typeWeapons.Sum(weapon => weapon.EnergyDrain);
 
-                if (typeWeapons.Count() >= 3)
-                {
-                    energy *= 1 - WeaponEnergyReduction; // Ik neem aan dat de energy van alle Weapons omlaag gaat
-                }
+                if (typeWeapons.Count() >= 3) energy *= 1 - WeaponEnergyReduction; // Ik neem aan dat de energy van alle Weapons omlaag gaat
 
                 shipEnergy += energy;
             }

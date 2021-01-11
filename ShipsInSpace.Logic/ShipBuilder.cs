@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GalacticSpaceTransitAuthority;
 
@@ -7,8 +6,8 @@ namespace ShipsInSpace.Logic
 {
     public class ShipBuilder
     {
-        private readonly ISpaceTransitAuthority _transitAuthority;
         private readonly Ship _ship;
+        private readonly ISpaceTransitAuthority _transitAuthority;
 
         public ShipBuilder(ISpaceTransitAuthority transitAuthority)
         {
@@ -41,6 +40,11 @@ namespace ShipsInSpace.Logic
         }
 
         #endregion
+
+        public Ship Build()
+        {
+            return _ship;
+        }
 
         #region Hull
 
@@ -78,10 +82,7 @@ namespace ShipsInSpace.Logic
 
         public ShipBuilder AddWing(IEnumerable<KeyValuePair<int, int[]>> wingWeapons)
         {
-            foreach (var (wingId, weaponIds) in wingWeapons)
-            {
-                AddWing(wingId, weaponIds);
-            }
+            foreach (var (wingId, weaponIds) in wingWeapons) AddWing(wingId, weaponIds);
 
             return this;
         }
@@ -103,10 +104,5 @@ namespace ShipsInSpace.Logic
         }
 
         #endregion
-
-        public Ship Build()
-        {
-            return _ship;
-        }
     }
 }
