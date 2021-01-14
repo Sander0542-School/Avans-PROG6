@@ -204,7 +204,8 @@ namespace ShipsInSpace.Web.Controllers
             {
                 HullId = inputModel.HullId,
                 EngineId = inputModel.EngineId,
-                WingCount = inputModel.WingCount
+                WingCount = inputModel.WingCount,
+                HullCapacity = inputModel.HullCapacity
             };
 
             return model;
