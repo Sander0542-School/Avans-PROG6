@@ -19,6 +19,11 @@ namespace ShipsInSpace.Web.Models.Ship
             [HullExists]
             [Display(Name = "Hull")]
             public int HullId { get; set; }
+            
+            [Required]
+            [Range(0, double.MaxValue)]
+            [Display(Name = "Hull Capacity")]
+            public double HullCapacity { get; set; }
 
             [Required]
             [EngineExists]

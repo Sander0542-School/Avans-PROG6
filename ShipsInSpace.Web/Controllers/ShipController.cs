@@ -48,6 +48,8 @@ namespace ShipsInSpace.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                model.Input.HullCapacity = _transitAuthority.CheckActualHullCapacity(_transitAuthority.GetHulls().First(hull1 => hull1.Id == model.Input.HullId));
+                
                 TempData["Input.HullEngine"] = JsonSerializer.Serialize(model.Input);
                 return RedirectToAction(nameof(Wings));
             }
@@ -81,7 +83,7 @@ namespace ShipsInSpace.Web.Controllers
                     .AddWing(model.Input.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
                     .Build();
 
-                var errors = ShipValidator.Validate(ship, license).ToList();
+                var errors = ShipValidator.Validate(ship, license, model.Input.HullCapacity).ToList();
 
                 if (!errors.Any())
                 {
@@ -133,7 +135,7 @@ namespace ShipsInSpace.Web.Controllers
                     .AddWing(model.Input.Wings.Select(wing => new KeyValuePair<int, int[]>(wing.WingId, wing.Weapons)))
                     .Build();
 
-                var errors = ShipValidator.Validate(ship, await _userHelper.GetLicense(User.Claims));
+                var errors = ShipValidator.Validate(ship, await _userHelper.GetLicense(User.Claims), model.Input.HullCapacity);
                 if (!errors.Any())
                 {
                     var jsonShip = JsonSerializer.Serialize(ship);

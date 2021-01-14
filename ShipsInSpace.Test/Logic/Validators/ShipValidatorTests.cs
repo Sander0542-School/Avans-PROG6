@@ -82,7 +82,7 @@ namespace ShipsInSpace.Test.Logic.Validators
             {
                 Engine = new Engine
                 {
-                    Weight = (int) takeOffMass + 1
+                    Weight = (int)takeOffMass + 1
                 },
                 Hull = new Hull
                 {
@@ -91,7 +91,7 @@ namespace ShipsInSpace.Test.Logic.Validators
                 Wings = new List<Wing>()
             };
 
-            Assert.False(ShipValidator.ValidMaximumTakeOffMass(ship));
+            Assert.False(ShipValidator.ValidMaximumTakeOffMass(ship, (int)ship.Hull.DefaultMaximumTakeOffMass));
         }
 
         [Theory]
@@ -107,7 +107,7 @@ namespace ShipsInSpace.Test.Logic.Validators
             {
                 Engine = new Engine
                 {
-                    Weight = (int) takeOffMass
+                    Weight = (int)takeOffMass
                 },
                 Hull = new Hull
                 {
@@ -116,7 +116,7 @@ namespace ShipsInSpace.Test.Logic.Validators
                 Wings = new List<Wing>()
             };
 
-            Assert.True(ShipValidator.ValidMaximumTakeOffMass(ship));
+            Assert.True(ShipValidator.ValidMaximumTakeOffMass(ship, (int)ship.Hull.DefaultMaximumTakeOffMass));
         }
 
         [Theory]
@@ -132,7 +132,7 @@ namespace ShipsInSpace.Test.Logic.Validators
             {
                 Engine = new Engine
                 {
-                    Weight = (int) takeOffMass - 1
+                    Weight = (int)takeOffMass - 1
                 },
                 Hull = new Hull
                 {
@@ -141,7 +141,7 @@ namespace ShipsInSpace.Test.Logic.Validators
                 Wings = new List<Wing>()
             };
 
-            Assert.True(ShipValidator.ValidMaximumTakeOffMass(ship));
+            Assert.True(ShipValidator.ValidMaximumTakeOffMass(ship, (int)ship.Hull.DefaultMaximumTakeOffMass));
         }
 
         [Fact]
@@ -832,7 +832,7 @@ namespace ShipsInSpace.Test.Logic.Validators
                 }
             };
 
-            Assert.Empty(ShipValidator.Validate(ship, PilotLicense.Z));
+            Assert.Empty(ShipValidator.Validate(ship, PilotLicense.Z, (int)ship.Hull.DefaultMaximumTakeOffMass));
         }
 
         [Fact]
@@ -924,7 +924,7 @@ namespace ShipsInSpace.Test.Logic.Validators
                 }
             };
 
-            Assert.Equal(10, ShipValidator.Validate(ship, PilotLicense.A).Distinct().Count());
+            Assert.Equal(10, ShipValidator.Validate(ship, PilotLicense.A, (int)ship.Hull.DefaultMaximumTakeOffMass).Distinct().Count());
         }
     }
 }

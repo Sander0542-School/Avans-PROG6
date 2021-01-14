@@ -9,9 +9,9 @@ namespace ShipsInSpace.Logic.Validators
 {
     public class ShipValidator
     {
-        public static IEnumerable<string> Validate(Ship ship, PilotLicense license)
+        public static IEnumerable<string> Validate(Ship ship, PilotLicense license, double hullCapacity)
         {
-            foreach (var s in ValidateHull(ship, license)) yield return s;
+            foreach (var s in ValidateHull(ship, license, hullCapacity)) yield return s;
 
             foreach (var s in ValidateEngine(ship)) yield return s;
 
@@ -22,11 +22,11 @@ namespace ShipsInSpace.Logic.Validators
 
         #region Hull
 
-        public static IEnumerable<string> ValidateHull(Ship ship, PilotLicense license)
+        public static IEnumerable<string> ValidateHull(Ship ship, PilotLicense license, double hullCapacity)
         {
             if (!ValidLicense(ship, license)) yield return "The total weight of the Engine, Wings and Weapons exceeds the maximum weight the pilot can handle.";
 
-            if (!ValidMaximumTakeOffMass(ship)) yield return "The total weight of the Engine, Wings and Weapons exceeds the Hulls maximum take off mass.";
+            if (!ValidMaximumTakeOffMass(ship, hullCapacity)) yield return "The total weight of the Engine, Wings and Weapons exceeds the Hulls maximum take off mass.";
         }
 
         public static bool ValidLicense(Ship ship, PilotLicense license)
@@ -34,9 +34,9 @@ namespace ShipsInSpace.Logic.Validators
             return ship.GetWeight() <= license.GetMaxWeight();
         }
 
-        public static bool ValidMaximumTakeOffMass(Ship ship)
+        public static bool ValidMaximumTakeOffMass(Ship ship, double hullCapacity)
         {
-            return ship.GetWeight() <= (int) ship.Hull.DefaultMaximumTakeOffMass;
+            return ship.GetWeight() <= hullCapacity;
         }
 
         #endregion

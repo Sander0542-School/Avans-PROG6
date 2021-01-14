@@ -8,6 +8,7 @@
 
 <form asp-action="Wings">
     @Html.ValidationSummary()
+    <input type="hidden" asp-for="Input.HullCapacity">
     <input type="hidden" asp-for="Input.WingCount">
     <input type="hidden" asp-for="Input.HullId">
     <input type="hidden" asp-for="Input.EngineId">
